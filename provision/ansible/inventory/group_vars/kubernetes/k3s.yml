@@ -28,6 +28,7 @@ k3s_registration_address: "{{ kubevip_address }}"
 
 # (list) A list of URLs to deploy on the primary control plane. Read notes below.
 k3s_server_manifests_urls:
+  # This manifest deploys Calico Network
   - url: https://docs.projectcalico.org/archive/v3.22/manifests/tigera-operator.yaml
     filename: tigera-operator.yaml
   - url: https://kube-vip.io/manifests/rbac.yaml
@@ -36,5 +37,6 @@ k3s_server_manifests_urls:
 # (list) A flat list of templates to deploy on the primary control plane
 # /var/lib/rancher/k3s/server/manifests
 k3s_server_manifests_templates:
+  # This Template configures Calica
   - "calico-installation.yaml.j2"
   - "kube-vip-daemonset.yaml.j2"
