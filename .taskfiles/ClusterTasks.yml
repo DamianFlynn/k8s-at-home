@@ -39,6 +39,11 @@ tasks:
     cmds:
       - kubectl get nodes {{.CLI_ARGS | default "-o wide"}}
 
+  k9s:
+    desc: List all the pods in your cluster
+    cmds:
+      - k9s
+
   pods:
     desc: List all the pods in your cluster
     cmds:
