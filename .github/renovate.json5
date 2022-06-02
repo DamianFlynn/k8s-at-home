@@ -1,11 +1,18 @@
 {
   "enabled": true,
+  "timezone": "Europe/Dublin",
   "semanticCommits": "enabled",
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "Renovate Dashboard",
+  "commitBody": "Signed-off-by: Jeff Billimek <billimek@users.noreply.github.com>",
   "suppressNotifications": ["prIgnoreNotification"],
   "rebaseWhen": "conflicted",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "commitMessageSuffix": "",
   "schedule": [
+    "after 1am every weekday",
+    "before 6am every weekday",
     "every weekend"
   ],
   // set up ignored deps
@@ -76,47 +83,168 @@
     // setup datasources
     {
       "matchDatasources": ["helm"],
+      "commitMessageTopic": "Helm chart {{depName}}",
+      "semanticCommitScope": "charts",
       "separateMinorPatch": true,
       "ignoreDeprecated": true
     },
     // global docker datasource settings
     {
-      "matchDatasources": ["docker"],
-      "enabled": true,
+      "datasources": ["docker"],
       "commitMessageTopic": "container image {{depName}}",
       "commitMessageExtra": "to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}",
-      "matchUpdateTypes": ["major", "minor", "patch"]
+      "updateTypes": ["major", "minor", "patch"],
+      "enabled": true
+    },
+        {
+      "matchDatasources": ["docker"],
+      "semanticCommitScope": "images",
+      "separateMinorPatch": true
     },
     // add labels according to package and update types
     {
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["major"],
+      "commitMessagePrefix": "feat(images)!: ",
       "labels": ["renovate/image", "dep/major"]
     },
     {
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["minor"],
+      "semanticCommitType": "feat",
       "labels": ["renovate/image", "dep/minor"]
     },
     {
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["patch"],
+      "semanticCommitType": "fix",
       "labels": ["renovate/image", "dep/patch"]
     },
     {
       "matchDatasources": ["helm"],
       "matchUpdateTypes": ["major"],
+      "commitMessagePrefix": "feat(charts)!: ",
       "labels": ["renovate/helm", "dep/major"]
     },
     {
       "matchDatasources": ["helm"],
       "matchUpdateTypes": ["minor"],
+      "semanticCommitType": "feat",
       "labels": ["renovate/helm", "dep/minor"]
     },
     {
       "matchDatasources": ["helm"],
       "matchUpdateTypes": ["patch"],
+      "semanticCommitType": "fix",
       "labels": ["renovate/helm", "dep/patch"]
+    },
+    // Custom versions
+    {
+      "matchDatasources": ["docker"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<compatibility>.*)$",
+      "matchPackageNames": ["blakeblackshear/frigate"]
+    },
+    {
+      "matchDatasources": ["docker"],
+      "versioning": "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z(-(?<compatibility>.*))?$",
+      "matchPackageNames": ["quay.io/minio/minio"]
+    },
+    {
+      "datasources": ["docker"],
+      "versionScheme": "regex:^nightly-0\\.(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
+      "packageNames": ["hotio/readarr"]
+    },
+    {
+      "datasources": ["docker"],
+      "versioning": "loose",
+      "packageNames": ["plexinc/pms-docker"]
+    },
+    // pin package versions
+    {
+      "matchDatasources": ["docker"],
+      "allowedVersions": "<13",
+      "matchPackageNames": [
+        "postgres",
+        "docker.io/library/postgres"
+      ]
+    },
+    {
+      "matchDatasources": ["docker"],
+      "allowedVersions": "<2",
+      "matchPackageNames": [
+        "influxdb"
+      ]
+    },
+    {
+      "matchDatasources": ["helm"],
+      "allowedVersions": "<2",
+      "matchPackageNames": ["metallb"]
+    },
+    // group packages
+    {
+      "matchDatasources": ["helm", "docker"],
+      "matchPackagePatterns": ["^rook.ceph"],
+      "groupName": "rook-ceph-suite",
+      "additionalBranchPrefix": "",
+      "separateMinorPatch": true
+    },
+    {
+      "matchDatasources": ["github-releases", "docker"],
+      "matchPackagePatterns": [
+        "external-snapshotter",
+        "snapshot-controller"
+      ],
+      "groupName": "external-snapshotter-suite",
+      "additionalBranchPrefix": "",
+      "separateMinorPatch": true
+    },
+    {
+      "matchDatasources": ["github-tags", "docker"],
+      "matchPackagePatterns": ["rancher/system-upgrade-controller"],
+      "groupName": "system-upgrade-controller-suite",
+      "additionalBranchPrefix": "",
+      "separateMinorPatch": true
+    },
+    // auto-updates - daily
+    {
+      "datasources": ["docker"],
+      "automerge": true,
+      "requiredStatusChecks": null,
+      "schedule": "after 1am and before 5am",
+      "updateTypes": ["minor", "patch"],
+      "packageNames": [
+        "homeassistant/home-assistant",
+        "ghcr.io/k8s-at-home/radarr",
+        "ghcr.io/k8s-at-home/sonarr",
+        "ghcr.io/k8s-at-home/nzbget",
+        "plexinc/pms-docker",
+        "hotio/readarr",
+        "nodered/node-red",
+        "zwavejs/zwavejs2mqtt"
+      ]
+    },
+    // auto-updates - weekly
+    {
+      "datasources": ["docker"],
+      "automerge": true,
+      "requiredStatusChecks": null,
+      "schedule": ["before 3am on Monday"],
+      "updateTypes": ["minor", "patch"],
+      "packageNames": [
+        "ghcr.io/k8s-at-home/prowlarr",
+        "ghcr.io/k8s-at-home/readarr"
+      ]
+    },
+    {
+      "datasources": ["helm"],
+      "automerge": true,
+      "requiredStatusChecks": null,
+      "schedule": "after 1am and before 5am",
+      "updateTypes": ["minor", "patch"],
+      "packageNames": [
+        // "grafana",
+        "thanos"
+      ]
     }
   ]
 }
