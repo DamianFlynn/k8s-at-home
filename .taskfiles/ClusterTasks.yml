@@ -8,6 +8,11 @@ tasks:
     cmds:
       - flux check --pre
 
+  flux:logs:
+    desc: Verify flux meets the prerequisites
+    cmds:
+      - flux logs --all-namespaces --since=2m -f
+
   flux:namespace:
     desc: Create the flux-system namespace
     cmds:
@@ -38,6 +43,11 @@ tasks:
     desc: List all the nodes in your cluster
     cmds:
       - kubectl get nodes {{.CLI_ARGS | default "-o wide"}}
+
+  nodelabels:
+    desc: List all the nodes in your cluster
+    cmds:
+      - kubectl get nodes -o json | jq .items[].metadata.labels
 
   k9s:
     desc: List all the pods in your cluster

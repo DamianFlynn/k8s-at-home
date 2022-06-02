@@ -1,3 +1,31 @@
+[![GitHub last commit](https://img.shields.io/github/last-commit/damianflynn/k8s-gitops?color=purple&style=flat-square)](https://github.com/billimek/k8s-gitops/commits/main)
+
+## :wrench:&nbsp; Workloads (by namespace)
+
+* [calico-system](calico/)
+* [cert-manager](cert-manager/)
+* [default](default/)
+* [flux-system](flux-system/)
+* [kube-system](kube-system/)
+* [metallb-system](metallb/)
+* [networking](networking/)
+* [tigera-operator](calico/)
+
+* [flux-system-extra](flux-system-extra/)
+* [logs](logs/)
+* [monitoring](monitoring/)
+* [rook-ceph](rook-ceph/)
+* [system-upgrade](system-upgrade/)
+* [velero](velero/)
+
+
+## :robot:&nbsp; Automation
+
+* [Renovate](https://github.com/renovatebot/renovate) keeps workloads up-to-date by scanning the repo and opening pull requests when it detects a new container image update or a new helm chart
+- [Kured](https://github.com/weaveworks/kured) automatically drains & reboots nodes when OS patches are applied requiring a reboot
+- [System Upgrade Controller](https://github.com/rancher/system-upgrade-controller) automatically upgrades k3s to new versions as they are released
+
+
 # Template for deploying k3s backed by Flux
 
 Highly opinionated template for deploying a single [k3s](https://k3s.io) cluster with [Ansible](https://www.ansible.com) and [Terraform](https://www.terraform.io) backed by [Flux](https://toolkit.fluxcd.io/) and [SOPS](https://toolkit.fluxcd.io/guides/mozilla-sops/).
@@ -29,8 +57,50 @@ The following components will be installed in your [k3s](https://k3s.io/) cluste
 - [k8s_gateway](https://github.com/ori-edge/k8s_gateway) - DNS resolver that provides local DNS to your Kubernetes ingresses
 - [traefik](https://traefik.io) - Kubernetes ingress controller used for a HTTP reverse proxy of Kubernetes ingresses
 - [local-path-provisioner](https://github.com/rancher/local-path-provisioner) - provision persistent local storage with Kubernetes
+- [renovatebot](https://github.com/renovatebot/renovate)
+
 
 _Additional applications include [hajimari](https://github.com/toboshii/hajimari), [error-pages](https://github.com/tarampampam/error-pages), [echo-server](https://github.com/Ealenn/Echo-Server), [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller), [reflector](https://github.com/emberstack/kubernetes-reflector), and [reloader](https://github.com/stakater/Reloader)_
+
+
+Systems to be added / considered
+
+* [node feature discovery](https://github.com/kubernetes-sigs/node-feature-discovery)
+* [descheduler](https://github.com/kubernetes-sigs/descheduler)
+  * [descheduler helm chart](https://github.com/kubernetes-sigs/descheduler/tree/master/charts/descheduler)
+* [kured](https://github.com/weaveworks/kured)
+  * [kured helm chart](https://github.com/weaveworks/kured/tree/main/charts/kured)
+* [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller)
+
+
+
+
+
+* [rook](https://rook.io/)
+* [longhorn](https://longhorn.io/)
+* [flux](https://toolkit.fluxcd.io/)
+  * [billimek's k8s gitops repo example](https://github.com/billimek/k8s-gitops)
+* [grafana](https://grafana.com/)
+  * [grafana helm chart](https://github.com/grafana/helm-charts/tree/main/charts/grafana)
+* [velero](https://velero.io/)
+  * [velero helm chart](https://github.com/vmware-tanzu/helm-charts/tree/main/charts/velero)
+* [eddiezane's kubernetes manifests](https://github.com/eddiezane/pikube)
+
+Application Charts to be Added
+
+* [home-assistant](https://www.home-assistant.io/)
+  * [home-assistant helm chart](https://github.com/k8s-at-home/charts/tree/master/charts/stable/home-assistant)
+* [node-red](https://nodered.org/)
+  * [node-red helm chart](https://github.com/k8s-at-home/charts/tree/master/charts/stable/node-red)
+* [mosquitto](https://mosquitto.org/)
+  * [mosquitto helm chart](https://github.com/k8s-at-home/charts/tree/master/charts/stable/mosquitto)
+* [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
+  * [zwavejs2mqtt helm chart](https://github.com/k8s-at-home/charts/tree/master/charts/stable/zwavejs2mqtt)
+* [frigate](https://github.com/blakeblackshear/frigate)
+  * [frigate helm chart](https://github.com/blakeblackshear/blakeshome-charts/tree/master/charts/frigate)
+
+
+
 
 For provisioning the following tools will be used:
 
