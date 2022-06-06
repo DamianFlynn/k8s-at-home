@@ -2,15 +2,89 @@
 
 ## :wrench:&nbsp; Workloads (by namespace)
 
-* [calico-system](calico/)
-* [cert-manager](cert-manager/)
-* [default](default/)
-* [flux-system](flux-system/)
-* [kube-system](kube-system/)
-* [metallb-system](metallb/)
-* [networking](networking/)
-* [tigera-operator](calico/)
+# yamllint disable
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-webhook-secret
+  namespace: flux-system
+stringData:
+  token: ${BOOTSTRAP_FLUX_GITHUB_WEBHOOK_SECRET}
 
+
+
+kubectl -n flux-system create secret generic discord-webhook \
+--from-literal=address=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
+
+
+kubectl -n flux-system create secret generic discord-webhook \
+--from-literal=address=https://discord.com/api/webhooks/983478725708480522/N4T52SB5PhixQtPF8y5dw0ptv2mXv8dpyTyLC3zBHXDsmGIBgZmB92Dq5Z6kknedZ0Tg
+
+## 📂 Repository structure
+
+The Git repository contains the following directories under `cluster` and are ordered below by how Flux will apply them.
+
+- **base** directory is the entrypoint to Flux
+- **crds** directory contains custom resource definitions (CRDs) that need to exist globally in your cluster before anything else exists
+- **core** directory (depends on **crds**) are important infrastructure applications (grouped by namespace) that should never be pruned by Flux
+- **apps** directory (depends on **core**) is where your common applications (grouped by namespace) could be placed, Flux will prune resources here if they are not tracked by Git anymore
+
+```
+cluster
+├── apps
+│   ├── default
+│   ├── kube-system
+│   ├── networking
+│   └── system-upgrade
+├── base
+│   └── flux-system
+├── core
+│   ├── cert-manager
+│   ├── kube-system
+│   ├── metallb-system
+│   └── namespaces
+└── crds
+    ├── cert-manager
+    ├── system-upgrade-controller
+    └── traefik
+```
+### Workloads
+
+#### crds
+* [traefik](traefik/)
+
+#### base
+* [flux-system](flux-system/)
+
+#### core
+* [cert-manager](cert-manager/)
+* [kube-system](kube-system/)
+    * [kube-vip](kube-system/kube-vip/)
+    * [node-feature-discovery](kube-system/kube-vip/)
+    * [descheduler](kube-system/descheduler/)
+* [metallb-system](metallb/)
+
+#### apps
+* [default](default/)
+    * [echo-server](default/echo-server/)
+    * [hajimari](default/hajimari/)
+* [flux-system](flux-system/)
+    * [webhooks](flux-system/webhooks/)
+* [kube-system](kube-system/)
+    * [reflector](kube-system/)
+    * [mertics-server](kube-system/)
+    * [reloader](kube-system/)
+* [networking](networking/)
+    * [cloudflare-ddns](networking/cloudflare-ddns/)
+    * [error-pages](networking/cloudflare-ddns/)
+    * [external-dns](networking/cloudflare-ddns/)
+    * [k8s-gateway](networking/k8s-gateway/)
+    * [traefik](networking/traefik/)
+
+
+* [calico-system](calico/)
+
+* [tigera-operator](calico/)
 * [flux-system-extra](flux-system-extra/)
 * [logs](logs/)
 * [monitoring](monitoring/)
@@ -160,35 +234,6 @@ It is advisable to install [pre-commit](https://pre-commit.com/) and the pre-com
     ```sh
     task precommit:update
     ```
-
-## 📂 Repository structure
-
-The Git repository contains the following directories under `cluster` and are ordered below by how Flux will apply them.
-
-- **base** directory is the entrypoint to Flux
-- **crds** directory contains custom resource definitions (CRDs) that need to exist globally in your cluster before anything else exists
-- **core** directory (depends on **crds**) are important infrastructure applications (grouped by namespace) that should never be pruned by Flux
-- **apps** directory (depends on **core**) is where your common applications (grouped by namespace) could be placed, Flux will prune resources here if they are not tracked by Git anymore
-
-```
-cluster
-├── apps
-│   ├── default
-│   ├── kube-system
-│   ├── networking
-│   └── system-upgrade
-├── base
-│   └── flux-system
-├── core
-│   ├── cert-manager
-│   ├── kube-system
-│   ├── metallb-system
-│   └── namespaces
-└── crds
-    ├── cert-manager
-    ├── system-upgrade-controller
-    └── traefik
-```
 
 ## 🚀 Lets go
 
