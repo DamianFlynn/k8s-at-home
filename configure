@@ -48,8 +48,8 @@ main() {
         envsubst < "${PROJECT_DIR}/tmpl/cluster/kube-vip-daemonset.yaml" \
             > "${PROJECT_DIR}/cluster/core/kube-system/kube-vip/daemon-set.yaml"
         # generate flux secrets
-        envsubst < "${PROJECT_DIR}/tmpl/cluster/flux-discord-secret.sops.yaml" \
-            > "${PROJECT_DIR}/cluster/apps/flux-system/discord-notifications/discord-secret.sops.yaml"
+        envsubst < "${PROJECT_DIR}/tmpl/cluster/discord-webhook-secret.sops.sops.yaml" \
+            > "${PROJECT_DIR}/cluster/apps/flux-system/discord-notifications/discord-webhook-secret.sops.yaml"
         # generate cluster secrets
         envsubst < "${PROJECT_DIR}/tmpl/cluster/cluster-secrets.sops.yaml" \
             > "${PROJECT_DIR}/cluster/base/cluster-secrets.sops.yaml"
@@ -64,7 +64,7 @@ main() {
         sops --encrypt --in-place "${PROJECT_DIR}/cluster/core/cert-manager/secret.sops.yaml"
         sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/networking/cloudflare-ddns/secret.sops.yaml"
         sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/networking/external-dns/secret.sops.yaml"
-        sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/flux-system/discord-notifications/discord-secret.sops.yaml"
+        sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/flux-system/discord-notifications/discord-webhook-secret.sops.yaml"
         # generate terraform secrets
         envsubst < "${PROJECT_DIR}/tmpl/terraform/secret.sops.yaml" \
             > "${PROJECT_DIR}/provision/terraform/cloudflare/secret.sops.yaml"
