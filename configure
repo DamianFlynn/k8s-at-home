@@ -48,7 +48,7 @@ main() {
         envsubst < "${PROJECT_DIR}/tmpl/cluster/kube-vip-daemonset.yaml" \
             > "${PROJECT_DIR}/cluster/core/kube-system/kube-vip/daemon-set.yaml"
         # generate flux secrets
-        envsubst < "${PROJECT_DIR}/tmpl/cluster/discord-webhook-secret.sops.sops.yaml" \
+        envsubst < "${PROJECT_DIR}/tmpl/cluster/discord-webhook-secret.sops.yaml" \
             > "${PROJECT_DIR}/cluster/apps/flux-system/discord-notifications/discord-webhook-secret.sops.yaml"
         # generate cluster secrets
         envsubst < "${PROJECT_DIR}/tmpl/cluster/cluster-secrets.sops.yaml" \
