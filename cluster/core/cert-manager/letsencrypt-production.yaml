@@ -17,6 +17,7 @@ spec:
             # https://github.com/jetstack/cert-manager/issues/2384#issuecomment-575301692
             apiTokenSecretRef:
               name: cloudflare-token-secret
+              key: cloudflare-token
         selector:
           dnsZones:
             - ${SECRET_DOMAIN}
