@@ -4,6 +4,12 @@ kind: Kustomization
 resources:
   - namespaces
   - cert-manager
+  - flux-system
   - kube-system
+  # - networking
   - metallb-system
+  # - longhorn-system
   - monitoring
+  # - tools
+  # - postgres
+  # - velero

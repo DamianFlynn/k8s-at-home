@@ -2,15 +2,15 @@
 apiVersion: notification.toolkit.fluxcd.io/v1beta1
 kind: Receiver
 metadata:
-  name: github-receiver
+  name: k8s-home
   namespace: flux-system
 spec:
   type: github
   events:
-    - ping
-    - push
+    - "ping"
+    - "push"
   secretRef:
-    name: github-webhook-secret
+    name: github-webhook-token
   resources:
     - apiVersion: source.toolkit.fluxcd.io/v1beta2
       kind: GitRepository
@@ -35,9 +35,4 @@ spec:
     - apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
       kind: Kustomization
       name: flux-system
-      namespace: flux-system
-
-    - apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
-      kind: Kustomization
-      name: traefik-crds
       namespace: flux-system

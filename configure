@@ -49,10 +49,10 @@ main() {
             > "${PROJECT_DIR}/cluster/core/kube-system/kube-vip/daemon-set.yaml"
         # generate flux secrets
         envsubst < "${PROJECT_DIR}/tmpl/cluster/discord-webhook-secret.sops.yaml" \
-            > "${PROJECT_DIR}/cluster/core/flux-system/notifications/discord/secret.sops.yaml"
+            > "${PROJECT_DIR}/cluster/core/flux-system/notifications/discord/discord-webhook-secret.sops.yaml"
         # generate botkube secrets
-        envsubst < "${PROJECT_DIR}/tmpl/cluster/botkube-helm-values.sops.yaml" \
-            > "${PROJECT_DIR}/cluster/apps/monitoring/botkube/botkube-helm-values.sops.yaml"
+        # envsubst < "${PROJECT_DIR}/tmpl/cluster/botkube-helm-values.sops.yaml" \
+        #     > "${PROJECT_DIR}/cluster/apps/monitoring/botkube/botkube-helm-values.sops.yaml"
 
         # generate cluster secrets
         envsubst < "${PROJECT_DIR}/tmpl/cluster/cluster-secrets.sops.yaml" \
@@ -68,9 +68,8 @@ main() {
         sops --encrypt --in-place "${PROJECT_DIR}/cluster/core/cert-manager/secret.sops.yaml"
         sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/networking/cloudflare-ddns/secret.sops.yaml"
         sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/networking/external-dns/secret.sops.yaml"
-        sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/flux-system/discord-notifications/discord-webhook-secret.
-        sops.yaml"
-        sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/monitoring/botkube/botkube-helm-values.sops.yaml"
+        sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/flux-system/discord-notifications/discord-webhook-secret.sops.yaml"
+        # sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/monitoring/botkube/botkube-helm-values.sops.yaml"
         # generate terraform secrets
         envsubst < "${PROJECT_DIR}/tmpl/terraform/secret.sops.yaml" \
             > "${PROJECT_DIR}/provision/terraform/cloudflare/secret.sops.yaml"
@@ -298,15 +297,15 @@ setup_github_webhook() {
         export BOOTSTRAP_FLUX_GITHUB_WEBHOOK_SECRET="${WEBHOOK_SECRET}"
         _log "INFO" "Using GitHub Token '${WEBHOOK_SECRET}' for Flux"
 
-        cp -rf  "${PROJECT_DIR}/tmpl/cluster/flux-system" "${PROJECT_DIR}/cluster/apps/"
+        cp -rf  "${PROJECT_DIR}/tmpl/cluster/flux-system" "${PROJECT_DIR}/cluster/core/"
 
         envsubst < "${PROJECT_DIR}/tmpl/cluster/flux-system/webhooks/github/secret.sops.yaml" \
-            > "${PROJECT_DIR}/cluster/apps/flux-system/webhooks/github/secret.sops.yaml"
+            > "${PROJECT_DIR}/cluster/core/flux-system/webhooks/github/secret.sops.yaml"
 
-        sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/flux-system/webhooks/github/secret.sops.yaml"
+        sops --encrypt --in-place "${PROJECT_DIR}/cluster/core/flux-system/webhooks/github/secret.sops.yaml"
 
-        if [[ $(yq eval --no-doc 'contains({"resources": ["flux-system"]})' "${PROJECT_DIR}/cluster/apps/kustomization.yaml") == false ]]; then
-            yq --inplace '.resources += [ "flux-system" ]' "${PROJECT_DIR}/cluster/apps/kustomization.yaml"
+        if [[ $(yq eval --no-doc 'contains({"resources": ["flux-system"]})' "${PROJECT_DIR}/cluster/core/kustomization.yaml") == false ]]; then
+            yq --inplace '.resources += [ "flux-system" ]' "${PROJECT_DIR}/cluster/core/kustomization.yaml"
         fi
     fi
 }
