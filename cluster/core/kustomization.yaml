@@ -8,7 +8,7 @@ resources:
   - kube-system
   - networking
   # - longhorn-system
-  - monitoring
+  # - monitoring
   # - tools
   # - postgres
   # - velero
