@@ -1,10 +1,12 @@
----
+# yamllint disable
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cluster-settings
-  namespace: flux-system
+    name: cluster-settings
+    namespace: flux-system
 data:
-  METALLB_LB_RANGE: ${BOOTSTRAP_METALLB_LB_RANGE}
-  METALLB_K8S_GATEWAY_ADDR: ${BOOTSTRAP_METALLB_K8S_GATEWAY_ADDR}
-  METALLB_TRAEFIK_ADDR: ${BOOTSTRAP_METALLB_TRAEFIK_ADDR}
+    SETTING_CERT_MANAGER_CLUSTER_ISSUER: letsencrypt-production
+    SETTING_CERT_MANAGER_CLUSTER_ISSUER_TEST: letsencrypt-staging
+    METALLB_LB_RANGE: ${BOOTSTRAP_METALLB_LB_RANGE}
+    METALLB_K8S_GATEWAY_ADDR: ${BOOTSTRAP_METALLB_K8S_GATEWAY_ADDR}
+    METALLB_TRAEFIK_ADDR: ${BOOTSTRAP_METALLB_TRAEFIK_ADDR}
