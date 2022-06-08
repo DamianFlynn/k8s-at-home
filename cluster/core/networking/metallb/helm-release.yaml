@@ -28,3 +28,21 @@ spec:
           protocol: layer2
           addresses:
             - "${METALLB_LB_RANGE}"
+    # prometheusRule:
+    #   enabled: true
+    # prometheus:
+    #   enabled: true
+    #   serviceMonitor:
+    #     enabled: true
+    #   prometheusRule:
+    #     enabled: true
+    # controller:
+    #   tolerations:
+    #     - key: "arm"
+    #       operator: "Exists"
+    # speaker:
+    #   tolerations:
+    #     - key: "arm"
+    #       operator: "Exists"
+    #   nodeSelector:
+    #     node_locality: internal

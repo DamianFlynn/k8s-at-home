@@ -6,8 +6,7 @@ resources:
   - cert-manager
   - flux-system
   - kube-system
-  # - networking
-  - metallb-system
+  - networking
   # - longhorn-system
   - monitoring
   # - tools
