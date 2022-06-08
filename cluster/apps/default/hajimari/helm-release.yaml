@@ -11,9 +11,9 @@ spec:
       chart: hajimari
       version: 1.2.0
       sourceRef:
-        kind: HelmRepository
-        name: hajimari-charts
-        namespace: flux-system
+          kind: HelmRepository
+          name: hajimari-charts
+          namespace: flux-system
       interval: 5m
   install:
     createNamespace: true
