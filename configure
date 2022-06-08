@@ -58,8 +58,10 @@ main() {
             > "${PROJECT_DIR}/cluster/apps/networking/cloudflare-ddns/secret.sops.yaml"
         envsubst < "${PROJECT_DIR}/tmpl/cluster/external-dns-secret.sops.yaml" \
             > "${PROJECT_DIR}/cluster/apps/networking/external-dns/secret.sops.yaml"
-        envsubst < "${PROJECT_DIR}/tmpl/cluster/discord-webhook-secret.sops.yaml" \
+        envsubst < "${PROJECT_DIR}/tmpl/cluster/core-flux-notifications-discord.sops.yaml" \
             > "${PROJECT_DIR}/cluster/core/flux-system/notifications/discord/secret.sops.yaml"
+        envsubst < "${PROJECT_DIR}/tmpl/cluster/core-flux-notifications-github.sops.yaml" \
+            > "${PROJECT_DIR}/cluster/core/flux-system/notifications/github/secret.sops.yaml"
         # envsubst < "${PROJECT_DIR}/tmpl/cluster/botkube-helm-values.sops.yaml" \
         #     > "${PROJECT_DIR}/cluster/apps/monitoring/botkube/botkube-helm-values.sops.yaml"
 
@@ -69,6 +71,7 @@ main() {
         sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/networking/cloudflare-ddns/secret.sops.yaml"
         sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/networking/external-dns/secret.sops.yaml"
         sops --encrypt --in-place "${PROJECT_DIR}/cluster/core/flux-system/notifications/discord/secret.sops.yaml"
+        sops --encrypt --in-place "${PROJECT_DIR}/cluster/core/flux-system/notifications/github/secret.sops.yaml"
         # sops --encrypt --in-place "${PROJECT_DIR}/cluster/apps/monitoring/botkube/botkube-helm-values.sops.yaml"
         # generate terraform secrets
         envsubst < "${PROJECT_DIR}/tmpl/terraform/secret.sops.yaml" \
