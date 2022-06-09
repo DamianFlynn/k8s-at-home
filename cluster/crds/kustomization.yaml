@@ -5,7 +5,7 @@ resources:
   # - 1password
   - cert-manager
   - system-upgrade-controller
-  # - external-dns
+  - external-dns
   # - external-snapshotter
   - kube-prometheus-stack
   - traefik

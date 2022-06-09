@@ -4,6 +4,11 @@ kind: Kustomization
 namespace: networking
 resources:
   - metallb
+  - error-pages
+  - cloudflare-ddns
+  - external-dns
+  - k8s-gateway
+  - traefik
   # - traefik-internal
   # - traefik-forward-auth
   # - wildcard-certificate
