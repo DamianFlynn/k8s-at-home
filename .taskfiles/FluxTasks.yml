@@ -2,11 +2,23 @@
 version: "3"
 
 tasks:
+
+  verify:
+    desc: Verify flux meets the prerequisites
+    cmds:
+      - flux check --pre
+
   sync:
     desc: Sync flux-system with the Git Repository
     cmds:
       - flux reconcile source git flux-system
     silent: true
+
+  logs:
+    desc: Print the logs from all namespaces begining with the previous 2 minutes, then follow
+    cmds:
+      - flux logs --all-namespaces --since=2m -f
+
 
   hr:
     desc: List all Helm Releases
@@ -25,6 +37,11 @@ tasks:
     cmds:
       - flux get sources chart -A
     silent: true
+
+  reconcile:
+    desc: Force update Flux to pull in changes from your Git repository
+    cmds:
+      - flux reconcile source git flux-system {{.CLI_ARGS | default "-n flux-system"}}
 
   k:
     desc: List all Kustomizations

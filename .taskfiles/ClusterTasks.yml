@@ -3,15 +3,104 @@ version: "3"
 
 tasks:
 
-  flux:verify:
-    desc: Verify flux meets the prerequisites
+  list-dockerhub:
+    desc: What dockerhub images are running in my cluster
     cmds:
-      - flux check --pre
+      - kubectl get pods --all-namespaces -o=jsonpath="{range .items[*]}{'\n'}{range .spec.containers[*]}{.image}{'\n'}{end}{end}" | sort | uniq | grep -Ev 'quay|gcr|ghcr|ecr|us-docker' | grep -Ev 'bitnami|rook|intel|grafana' |  sed -e 's/docker\.io\///g' | sort | uniq
 
-  flux:logs:
-    desc: Verify flux meets the prerequisites
+  list-failed-pods:
+    desc: List failed pods
     cmds:
-      - flux logs --all-namespaces --since=2m -f
+      - kubectl get pods --field-selector status.phase=Failed -A --ignore-not-found=true
+
+  delete-failed-pods:
+    desc: Deletes failed pods
+    cmds:
+      - kubectl delete pods --field-selector status.phase=Failed -A --ignore-not-found=true
+
+
+  netshoot:
+    desc: Create a netshoot container for debugging
+    cmds:
+      - kubectl run tmp-shell --rm -i --tty --image ghcr.io/nicolaka/netshoot:latest {{.CLI_ARGS}}
+
+  debug-node:
+    desc: Create a privileged container on a node for debugging, ex. NODE=anvil task debug-node
+    interactive: true
+    cmds:
+      - |
+        kubectl run debug-{{.NODE}} -i --tty --rm --image="docker.io/library/alpine:3.15" --privileged --overrides='
+          {
+            "spec": {
+              "nodeSelector": {
+                "kubernetes.io/hostname": "{{.NODE}}"
+              },
+              "restartPolicy": "Never"
+            }
+          }'
+
+
+  debug-volume:
+    desc: Attach a volume to a container for debugging, ex. VOLUME=zigbee2mqtt-config-v1 NAMESPACE=home task debug-volume
+    interactive: true
+    silent: true
+    cmds:
+      - |
+        kubectl run debug-{{.VOLUME}} -n {{.NAMESPACE}} -i --tty --rm --image=null --overrides='
+          {
+            "spec": {
+              "containers": [
+                {
+                  "name": "debug",
+                  "image": "docker.io/library/alpine:3.15",
+                  "command": [
+                    "/bin/sh"
+                  ],
+                  "stdin": true,
+                  "stdinOnce": true,
+                  "tty": true,
+                  "lifecycle": {
+                    "postStart": {
+                      "exec": {
+                        "command": [
+                          "/bin/sh",
+                          "-c",
+                          "apk add --no-cache curl vim"
+                        ]
+                      }
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "name": "backups",
+                      "mountPath": "/mnt/backups/"
+                    },
+                    {
+                      "name": "debug-volume",
+                      "mountPath": "/mnt/volume/"
+                    }
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "name": "backups",
+                  "nfs": {
+                    "server": '{{.NAS_ADDRESS | default "expanse"}}',
+                    "path": '{{.NAS_PATH | default "/tycho/Apps/External/Backups"}}'
+                  }
+                },
+                {
+                  "name": "debug-volume",
+                  "persistentVolumeClaim": {
+                    "claimName": "{{.VOLUME}}"
+                  }
+                }
+              ],
+              "restartPolicy": "Never"
+            }
+          }'
+
 
   flux:namespace:
     desc: Create the flux-system namespace
@@ -34,10 +123,6 @@ tasks:
     cmds:
       - kubectl apply -k {{.CLUSTER_DIR}}/base/flux-system
 
-  reconcile:
-    desc: Force update Flux to pull in changes from your Git repository
-    cmds:
-      - flux reconcile source git flux-system {{.CLI_ARGS | default "-n flux-system"}}
 
   nodes:
     desc: List all the nodes in your cluster
@@ -45,12 +130,12 @@ tasks:
       - kubectl get nodes {{.CLI_ARGS | default "-o wide"}}
 
   nodelabels:
-    desc: List all the nodes in your cluster
+    desc: List all the nodes in your cluster with lables
     cmds:
       - kubectl get nodes -o json | jq .items[].metadata.labels
 
   k9s:
-    desc: List all the pods in your cluster
+    desc: Launch k9s tool
     cmds:
       - k9s
 
@@ -64,20 +149,6 @@ tasks:
     cmds:
       - kubectl get kustomizations {{.CLI_ARGS | default "-A"}}
 
-  helmreleases:
-    desc: List all the helmreleases in your cluster
-    cmds:
-      - kubectl get helmreleases {{.CLI_ARGS | default "-A"}}
-
-  helmrepositories:
-    desc: List all the helmreleases in your cluster
-    cmds:
-      - kubectl get helmrepositories {{.CLI_ARGS | default "-A"}}
-
-  gitrepositories:
-    desc: List all the helmreleases in your cluster
-    cmds:
-      - kubectl get gitrepositories {{.CLI_ARGS | default "-A"}}
 
   certificates:
     desc: List all the certificates in your cluster
@@ -90,8 +161,8 @@ tasks:
     cmds:
       - task: nodes
       - task: kustomizations
-      - task: helmreleases
-      - task: helmrepositories
-      - task: gitrepositories
+      - task: helm:releases
+      - task: helm:repositories
+      - task: helm:gitrepositories
       - task: certificates
       - task: pods

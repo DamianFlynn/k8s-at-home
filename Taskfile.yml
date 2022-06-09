@@ -16,9 +16,12 @@ env:
 includes:
   ansible: .taskfiles/AnsibleTasks.yml
   cluster: .taskfiles/ClusterTasks.yml
+  flux: .taskfiles/FluxTasks.yml
   precommit: .taskfiles/PrecommitTasks.yml
   terraform: .taskfiles/TerraformTasks.yml
-  flux: .taskfiles/FluxTasks.yml
+  helm: .taskfiles/HelmTasks.yml
+  lint: .taskfiles/LintTasks.yml
+  format: .taskfiles/FormatTasks.yml
 
 tasks:
 
