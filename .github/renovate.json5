@@ -7,16 +7,16 @@
     ":semanticCommits",
     "docker:enableMajor",
     ":enablePreCommit",
-    "github>onedr0p/home-ops//.github/renovate/allowedVersions.json5",
-    "github>onedr0p/home-ops//.github/renovate/autoMerge.json5",
-    "github>onedr0p/home-ops//.github/renovate/commitMessage.json5",
-    "github>onedr0p/home-ops//.github/renovate/groups.json5",
-    "github>onedr0p/home-ops//.github/renovate/labels.json5",
-    "github>onedr0p/home-ops//.github/renovate/semanticCommits.json5"
+    "github>damianflynn/k8s-at-home//.github/renovate/allowedVersions.json5",
+    "github>damianflynn/k8s-at-home//.github/renovate/autoMerge.json5",
+    "github>damianflynn/k8s-at-home//.github/renovate/commitMessage.json5",
+    "github>damianflynn/k8s-at-home//.github/renovate/groups.json5",
+    "github>damianflynn/k8s-at-home//.github/renovate/labels.json5",
+    "github>damianflynn/k8s-at-home//.github/renovate/semanticCommits.json5"
   ],
   "platform": "github",
   "username": "rosey-bot[bot]",
-  "repositories": ["onedr0p/home-ops"],
+  "repositories": ["damianflynn/k8s-at-home"],
   "onboarding": false,
   "requireConfig": false,
   "gitAuthor": "rosey-bot <98030736+rosey-bot[bot]@users.noreply.github.com>",
@@ -32,6 +32,9 @@
     "ghcr.io/fluxcd/notification-controller",
     "ghcr.io/fluxcd/source-controller"
   ],
+  "pre-commit": {
+    "enabled": true
+  },
   "docker-compose": {
     "fileMatch": ["ansible/.+/docker-compose.*\\.ya?ml(\\.j2)?$"]
   },
@@ -42,7 +45,10 @@
     "fileMatch": ["cluster/.+\\.ya?ml$"]
   },
   "kubernetes": {
-    "fileMatch": ["cluster/.+\\.ya?ml$"]
+    "fileMatch": [
+      "cluster/.+\\.ya?ml$",
+      "provision/ansible/.+\\.ya?ml.j2$"
+    ]
   },
   "regexManagers": [
     {
