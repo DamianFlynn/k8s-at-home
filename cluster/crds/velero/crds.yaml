@@ -2,56 +2,62 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
-  name: traefik-crd-source
+  name: velero-source
   namespace: flux-system
 spec:
   interval: 30m
-  url: https://github.com/traefik/traefik-helm-chart.git
+  url: https://github.com/vmware-tanzu/helm-charts.git
   ref:
-    # renovate: registryUrl=https://helm.traefik.io/traefik chart=traefik
-    tag: v10.19.4
+    # renovate: registryUrl=https://vmware-tanzu.github.io/helm-charts
+    tag: velero-2.29.7
   ignore: |
-    # exclude all but the CDRs
+    # exclude all
     /*
-    # path to crds
-    !/traefik/crds/
+    # include deploy crds dir
+    !/charts/velero/crds
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: traefik-crds
+  name: velero-crds
   namespace: flux-system
 spec:
   interval: 15m
   prune: false
   sourceRef:
     kind: GitRepository
-    name: traefik-crd-source
+    name: velero-source
   healthChecks:
     - apiVersion: apiextensions.k8s.io/v1
       kind: CustomResourceDefinition
-      name: ingressroutes.traefik.containo.us
+      name: backups.velero.io
     - apiVersion: apiextensions.k8s.io/v1
       kind: CustomResourceDefinition
-      name: ingressroutetcps.traefik.containo.us
+      name: backupstoragelocations.velero.io
     - apiVersion: apiextensions.k8s.io/v1
       kind: CustomResourceDefinition
-      name: ingressrouteudps.traefik.containo.us
+      name: deletebackuprequests.velero.io
     - apiVersion: apiextensions.k8s.io/v1
       kind: CustomResourceDefinition
-      name: middlewares.traefik.containo.us
+      name: downloadrequests.velero.io
     - apiVersion: apiextensions.k8s.io/v1
       kind: CustomResourceDefinition
-      name: middlewaretcps.traefik.containo.us
+      name: podvolumebackups.velero.io
     - apiVersion: apiextensions.k8s.io/v1
       kind: CustomResourceDefinition
-      name: serverstransports.traefik.containo.us
+      name: podvolumerestores.velero.io
     - apiVersion: apiextensions.k8s.io/v1
       kind: CustomResourceDefinition
-      name: tlsoptions.traefik.containo.us
+      name: resticrepositories.velero.io
     - apiVersion: apiextensions.k8s.io/v1
       kind: CustomResourceDefinition
-      name: tlsstores.traefik.containo.us
+      name: restores.velero.io
     - apiVersion: apiextensions.k8s.io/v1
       kind: CustomResourceDefinition
-      name: traefikservices.traefik.containo.us
+      name: schedules.velero.io
+    - apiVersion: apiextensions.k8s.io/v1
+      kind: CustomResourceDefinition
+      name: serverstatusrequests.velero.io
+    - apiVersion: apiextensions.k8s.io/v1
+      kind: CustomResourceDefinition
+      name: volumesnapshotlocations.velero.io

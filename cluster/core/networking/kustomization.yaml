@@ -9,6 +9,5 @@ resources:
   - external-dns
   - k8s-gateway
   - traefik
-  # - traefik-internal
-  # - traefik-forward-auth
-  # - wildcard-certificate
+  - traefik-forward-auth
+  - wildcard-certificate

@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   type: github
-  address: https://github.com/DamianFlynn/k8s-at-home
+  address: https://github.com/damianflynn/k8s-at-home
   secretRef:
     name: github-token
 ---
