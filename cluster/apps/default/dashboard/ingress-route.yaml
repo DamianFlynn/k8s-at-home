@@ -2,21 +2,19 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: dashboard-ingress
-  namespace: monitoring
+  name: k8s-ingress
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`dashboard.${SECRET_DOMAIN}`)
+    - match: Host(`k8s.${SECRET_DOMAIN}`)
       kind: Rule
       services:
-        - name: heimdall
-          namespace: monitoring
-          port: 80
-          scheme: http
+        - name: kubernetes-dashboard
+          port: https
+          scheme: https
       middlewares:
         - name: traefik-forward-auth
           namespace: networking
   tls:
-    secretName: "dashboard-${SECRET_DOMAIN/./-}-tls"
+    secretName: "k8s-${SECRET_DOMAIN/./-}-tls"
