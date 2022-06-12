@@ -6,9 +6,11 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m0s
+  url: https://github.com/DamianFlynn/k8s-at-home
   ref:
     branch: main
-  url: https://github.com/DamianFlynn/k8s-at-home
+  secretRef:
+    name: github-deploy-key
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
