@@ -12,31 +12,25 @@ spec:
       version: v1.8.0
       sourceRef:
         kind: HelmRepository
-        name: jetstack-charts
+        name: jetstack
         namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
   values:
     installCRDs: false
     webhook:
       enabled: true
     extraArgs:
-      - --dns01-recursive-nameservers=1.1.1.1:53
+      - --dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53
       - --dns01-recursive-nameservers-only
-    cainjector:
-      replicaCount: 1
-    resources:
-      requests:
-        cpu: "10m"
-        memory: "32Mi"
-      limits:
-        cpu: "250m"
-        memory: "250Mi"
+    replicaCount: 1
     podDnsPolicy: "None"
     podDnsConfig:
       nameservers:
         - "1.1.1.1"
-        - "8.8.8.8"
-    prometheus:
-      enabled: true
-      servicemonitor:
-        enabled: true
-        prometheusInstance: monitoring
+        - "9.9.9.9"

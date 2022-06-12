@@ -11,9 +11,9 @@ spec:
       chart: hajimari
       version: 1.2.0
       sourceRef:
-          kind: HelmRepository
-          name: hajimari-charts
-          namespace: flux-system
+        kind: HelmRepository
+        name: hajimari
+        namespace: flux-system
       interval: 5m
   install:
     createNamespace: true
@@ -107,7 +107,7 @@ spec:
         enabled: true
         ingressClassName: "traefik"
         annotations:
-          cert-manager.io/cluster-issuer: "letsencrypt-production"
+          cert-manager.io/cluster-issuer: "letsencrypt-staging"
           hajimari.io/enable: "true"
           hajimari.io/icon: "weather-sunset"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"

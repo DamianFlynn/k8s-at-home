@@ -24,7 +24,7 @@
   color: "72ccf3"
   description: >-
     Changes made in the .task directory
-- name: area/area/vscode
+- name: area/vscode
   color: "72ccf3"
   description: >-
     Changes made in the .VSCode directory

@@ -4,4 +4,3 @@ kind: Kustomization
 resources:
   - echo-server
   - hajimari
-  - dashboard
