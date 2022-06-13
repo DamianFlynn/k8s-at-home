@@ -3,6 +3,51 @@ version: "3"
 
 tasks:
 
+
+  prepare:
+    desc: Prepare all the k8s nodes for running k3s
+    dir: provision/ansible
+    cmds:
+      - ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml {{.ANSIBLE_PLAYBOOK_DIR}}/cluster-prepare.yml
+
+  install:
+    desc: Install Kubernetes on the nodes
+    dir: provision/ansible
+    cmds:
+      - ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml {{.ANSIBLE_PLAYBOOK_DIR}}/cluster-installation.yml
+
+  nuke:
+    desc: Uninstall Kubernetes on the nodes
+    dir: provision/ansible
+    interactive: true
+    cmds:
+      - ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml {{.ANSIBLE_PLAYBOOK_DIR}}/cluster-nuke.yml
+      - task: reboot
+
+  ping:
+    desc: Ping all the hosts
+    dir: provision/ansible
+    cmds:
+      - ansible all -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml --one-line -m 'ping'
+
+  uptime:
+    desc: Uptime of all the hosts
+    dir: provision/ansible
+    cmds:
+      - ansible all -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml --one-line -a 'uptime'
+
+  reboot:
+    desc: Reboot all the k8s nodes
+    dir: provision/ansible
+    cmds:
+      - ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml {{.ANSIBLE_PLAYBOOK_DIR}}/cluster-reboot.yml
+
+  poweroff:
+    desc: Shutdown all the k8s nodes
+    dir: provision/ansible
+    cmds:
+      - ansible kubernetes -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml -a '/usr/bin/systemctl poweroff' --become
+
   list-dockerhub:
     desc: What dockerhub images are running in my cluster
     cmds:
@@ -100,28 +145,6 @@ tasks:
               "restartPolicy": "Never"
             }
           }'
-
-
-  flux:namespace:
-    desc: Create the flux-system namespace
-    cmds:
-      - kubectl create namespace flux-system --dry-run=client -o yaml | kubectl apply -f -
-
-  flux:secret:
-    desc: Create the Age secret in the flux-system namespace
-    cmds:
-      - cat {{.SOPS_AGE_KEY_FILE}} | kubectl -n flux-system create secret generic sops-age --from-file=age.agekey=/dev/stdin
-    preconditions:
-      - sh: test -f {{.SOPS_AGE_KEY_FILE}}
-        msg: |
-          Age key file is not found. Did you forget to create it?
-    vars:
-      SOPS_AGE_KEY_FILE: ~/.config/sops/age/keys.txt
-
-  flux:install:
-    desc: Install Flux into your cluster, run this again if it fails
-    cmds:
-      - kubectl apply -k {{.CLUSTER_DIR}}/base/flux-system
 
 
   nodes:
