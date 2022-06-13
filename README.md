@@ -1,131 +1,3 @@
-[![GitHub last commit](https://img.shields.io/github/last-commit/damianflynn/k8s-at-home?color=purple&style=flat-square)](https://github.com/damianflynn/k8s-at-home/commits/main)
-
-[![Discord](https://img.shields.io/discord/673534664354430999?style=for-the-badge&label=discord&logo=discord&logoColor=white)](https://discord.gg/k8s-at-home)
-[![k3s](https://img.shields.io/badge/k3s-v1.23-brightgreen?style=for-the-badge&logo=kubernetes&logoColor=white)](https://k3s.io/)
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white&style=for-the-badge)](https://github.com/pre-commit/pre-commit)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/damianflynn/k8s-at-home/Schedule%20-%20Renovate?label=renovate&logo=renovatebot&style=for-the-badge)](https://github.com/damianflynn/k8s-at-home/actions/workflows/schedule-renovate.yaml)
-[![Lines of code](https://img.shields.io/tokei/lines/github/damianflynn/k8s-at-home?style=for-the-badge&color=brightgreen&label=lines&logo=codefactor&logoColor=white)](https://github.com/damianflynn/k8s-at-home/graphs/contributors)
-
-
-## :wrench:&nbsp; Workloads (by namespace)
-
-# yamllint disable
-apiVersion: v1
-kind: Secret
-metadata:
-  name: github-webhook-secret
-  namespace: flux-system
-stringData:
-  token: ${BOOTSTRAP_FLUX_GITHUB_WEBHOOK_SECRET}
-
-
-
-kubectl -n flux-system create secret generic discord-webhook \
---from-literal=address=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
-
-
-
-## 📂 Repository structure
-
-The Git repository contains the following directories under `cluster` and are ordered below by how Flux will apply them.
-
-- **base** directory is the entrypoint to Flux
-- **crds** directory contains custom resource definitions (CRDs) that need to exist globally in your cluster before anything else exists
-- **core** directory (depends on **crds**) are important infrastructure applications (grouped by namespace) that should never be pruned by Flux
-- **apps** directory (depends on **core**) is where your common applications (grouped by namespace) could be placed, Flux will prune resources here if they are not tracked by Git anymore
-
-```
-📁 cluster      # k8s cluster defined as code
-├─📁 flux       # flux, gitops operator, loaded before everything
-├─📁 crds       # custom resources, loaded before 📁 core and 📁 apps
-├─📁 charts     # helm repos, loaded before 📁 core and 📁 apps
-├─📁 config     # cluster config, loaded before 📁 core and 📁 apps
-├─📁 core       # crucial apps, namespaced dir tree, loaded before 📁 apps
-└─📁 apps       # regular apps, namespaced dir tree, loaded last
-  ├─📁 default                # 'default' namespace
-    ├─📁 echo-server          # External testing echo-server
-    └─📁 hajimari             # Dashboard for applicstions - internal only
-  ├─📁 home                   # 'home' namespace
-    └─📁 home-assistant     # Home-assistant
-  ├─📁 kube-system            # 'home' namespace
-    └─📁 dashboard          # Kubernettes Dashboard
-  ├─📁 monitoring             # 'home' namespace
-    └─📁 grafana            # Grafanna
-  ├─📁 networking             # 'networking' namespace
-    ├─📁 error-pages        # Traefik Error Pages
-    └─📁 traefik            # Traefik
-  └─📁 tools                  # Traefik
-    └─📁 changedetection-io            # Traefik
-cluster
-├── apps
-│   ├── default
-│   ├── kube-system
-│   ├── networking
-│   └── system-upgrade
-├── base
-│   └── flux-system
-├── core
-│   ├── cert-manager
-│   ├── kube-system
-│   ├── metallb-system
-│   └── namespaces
-└── crds
-    ├── cert-manager
-    ├── system-upgrade-controller
-    └── traefik
-```
-### Workloads
-
-#### crds
-* [traefik](traefik/)
-
-#### base
-* [flux-system](flux-system/)
-
-#### core
-* [cert-manager](cert-manager/)
-* [kube-system](kube-system/)
-    * [kube-vip](kube-system/kube-vip/)
-    * [node-feature-discovery](kube-system/kube-vip/)
-    * [descheduler](kube-system/descheduler/)
-* [metallb-system](metallb/)
-
-#### apps
-* [default](default/)
-    * [echo-server](default/echo-server/)
-    * [hajimari](default/hajimari/)
-* [flux-system](flux-system/)
-    * [webhooks](flux-system/webhooks/)
-* [kube-system](kube-system/)
-    * [reflector](kube-system/)
-    * [mertics-server](kube-system/)
-    * [reloader](kube-system/)
-* [networking](networking/)
-    * [cloudflare-ddns](networking/cloudflare-ddns/)
-    * [error-pages](networking/cloudflare-ddns/)
-    * [external-dns](networking/cloudflare-ddns/)
-    * [k8s-gateway](networking/k8s-gateway/)
-    * [traefik](networking/traefik/)
-
-
-* [calico-system](calico/)
-
-* [tigera-operator](calico/)
-* [flux-system-extra](flux-system-extra/)
-* [logs](logs/)
-* [monitoring](monitoring/)
-* [rook-ceph](rook-ceph/)
-* [system-upgrade](system-upgrade/)
-* [velero](velero/)
-
-
-## :robot:&nbsp; Automation
-
-* [Renovate](https://github.com/renovatebot/renovate) keeps workloads up-to-date by scanning the repo and opening pull requests when it detects a new container image update or a new helm chart
-- [Kured](https://github.com/weaveworks/kured) automatically drains & reboots nodes when OS patches are applied requiring a reboot
-- [System Upgrade Controller](https://github.com/rancher/system-upgrade-controller) automatically upgrades k3s to new versions as they are released
-
-
 # Template for deploying k3s backed by Flux
 
 Highly opinionated template for deploying a single [k3s](https://k3s.io) cluster with [Ansible](https://www.ansible.com) and [Terraform](https://www.terraform.io) backed by [Flux](https://toolkit.fluxcd.io/) and [SOPS](https://toolkit.fluxcd.io/guides/mozilla-sops/).
@@ -134,14 +6,14 @@ The purpose here is to showcase how you can deploy an entire Kubernetes cluster 
 
 ## Overview
 
-- [Introduction](https://github.com/k8s-at-home/template-cluster-k3s#-introduction)
-- [Prerequisites](https://github.com/k8s-at-home/template-cluster-k3s#-prerequisites)
-- [Repository structure](https://github.com/k8s-at-home/template-cluster-k3s#-repository-structure)
-- [Lets go!](https://github.com/k8s-at-home/template-cluster-k3s#-lets-go)
-- [Post installation](https://github.com/k8s-at-home/template-cluster-k3s#-post-installation)
-- [Troubleshooting](https://github.com/k8s-at-home/template-cluster-k3s#-troubleshooting)
-- [What's next](https://github.com/k8s-at-home/template-cluster-k3s#-whats-next)
-- [Thanks](https://github.com/k8s-at-home/template-cluster-k3s#-thanks)
+- [Introduction](https://github.com/k8s-at-home/flux-cluster-template#-introduction)
+- [Prerequisites](https://github.com/k8s-at-home/flux-cluster-template#-prerequisites)
+- [Repository structure](https://github.com/k8s-at-home/flux-cluster-template#-repository-structure)
+- [Lets go!](https://github.com/k8s-at-home/flux-cluster-template#-lets-go)
+- [Post installation](https://github.com/k8s-at-home/flux-cluster-template#-post-installation)
+- [Troubleshooting](https://github.com/k8s-at-home/flux-cluster-template#-troubleshooting)
+- [What's next](https://github.com/k8s-at-home/flux-cluster-template#-whats-next)
+- [Thanks](https://github.com/k8s-at-home/flux-cluster-template#-thanks)
 
 ## 👋 Introduction
 
@@ -151,56 +23,13 @@ The following components will be installed in your [k3s](https://k3s.io/) cluste
 - [kube-vip](https://kube-vip.io/) - Load balancer for the Kubernetes control plane nodes
 - [metallb](https://metallb.universe.tf/) - Load balancer for Kubernetes services
 - [cert-manager](https://cert-manager.io/) - Operator to request SSL certificates and store them as Kubernetes resources
-- [flannel](https://github.com/flannel-io/flannel) - default CNI provided by k3s
 - [calico](https://www.tigera.io/project-calico/) - Container networking interface for inter pod and service networking
 - [external-dns](https://github.com/kubernetes-sigs/external-dns) - Operator to publish DNS records to Cloudflare (and other providers) based on Kubernetes ingresses
 - [k8s_gateway](https://github.com/ori-edge/k8s_gateway) - DNS resolver that provides local DNS to your Kubernetes ingresses
 - [traefik](https://traefik.io) - Kubernetes ingress controller used for a HTTP reverse proxy of Kubernetes ingresses
 - [local-path-provisioner](https://github.com/rancher/local-path-provisioner) - provision persistent local storage with Kubernetes
-- [renovatebot](https://github.com/renovatebot/renovate)
 
-
-_Additional applications include [hajimari](https://github.com/toboshii/hajimari), [error-pages](https://github.com/tarampampam/error-pages), [echo-server](https://github.com/Ealenn/Echo-Server), [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller), [reflector](https://github.com/emberstack/kubernetes-reflector), and [reloader](https://github.com/stakater/Reloader)_
-
-
-Systems to be added / considered
-
-* [node feature discovery](https://github.com/kubernetes-sigs/node-feature-discovery)
-* [descheduler](https://github.com/kubernetes-sigs/descheduler)
-  * [descheduler helm chart](https://github.com/kubernetes-sigs/descheduler/tree/master/charts/descheduler)
-* [kured](https://github.com/weaveworks/kured)
-  * [kured helm chart](https://github.com/weaveworks/kured/tree/main/charts/kured)
-* [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller)
-
-
-
-
-
-* [rook](https://rook.io/)
-* [longhorn](https://longhorn.io/)
-* [flux](https://toolkit.fluxcd.io/)
-  * [billimek's k8s gitops repo example](https://github.com/billimek/k8s-gitops)
-* [grafana](https://grafana.com/)
-  * [grafana helm chart](https://github.com/grafana/helm-charts/tree/main/charts/grafana)
-* [velero](https://velero.io/)
-  * [velero helm chart](https://github.com/vmware-tanzu/helm-charts/tree/main/charts/velero)
-* [eddiezane's kubernetes manifests](https://github.com/eddiezane/pikube)
-
-Application Charts to be Added
-
-* [home-assistant](https://www.home-assistant.io/)
-  * [home-assistant helm chart](https://github.com/k8s-at-home/charts/tree/master/charts/stable/home-assistant)
-* [node-red](https://nodered.org/)
-  * [node-red helm chart](https://github.com/k8s-at-home/charts/tree/master/charts/stable/node-red)
-* [mosquitto](https://mosquitto.org/)
-  * [mosquitto helm chart](https://github.com/k8s-at-home/charts/tree/master/charts/stable/mosquitto)
-* [zwavejs2mqtt](https://github.com/zwave-js/zwavejs2mqtt)
-  * [zwavejs2mqtt helm chart](https://github.com/k8s-at-home/charts/tree/master/charts/stable/zwavejs2mqtt)
-* [frigate](https://github.com/blakeblackshear/frigate)
-  * [frigate helm chart](https://github.com/blakeblackshear/blakeshome-charts/tree/master/charts/frigate)
-
-
-
+_Additional applications include [hajimari](https://github.com/toboshii/hajimari), [error-pages](https://github.com/tarampampam/error-pages), [echo-server](https://github.com/Ealenn/Echo-Server), [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller), [reflector](https://github.com/emberstack/kubernetes-reflector), [reloader](https://github.com/stakater/Reloader), and [kured](https://github.com/weaveworks/kured)_
 
 For provisioning the following tools will be used:
 
@@ -247,7 +76,7 @@ For provisioning the following tools will be used:
 ### ⚠️ pre-commit
 
 It is advisable to install [pre-commit](https://pre-commit.com/) and the pre-commit hooks that come with this repository.
-[sops-pre-commit](https://github.com/k8s-at-home/sops-pre-commit) and [gitleaks](https://github.com/zricethezav/gitleaks) will check to make sure you are not by accident committing un-encrypted secrets.
+[sops-pre-commit](https://github.com/k8s-at-home/sops-pre-commit) will check to make sure you are not committing non-encrypted Kubernetes secrets to your repository.
 
 1. Enable Pre-Commit
 
@@ -260,6 +89,20 @@ It is advisable to install [pre-commit](https://pre-commit.com/) and the pre-com
     ```sh
     task precommit:update
     ```
+
+## 📂 Repository structure
+
+The Git repository contains the following directories under `cluster` and are ordered below by how Flux will apply them.
+
+```sh
+📁 cluster      # k8s cluster defined as code
+├─📁 flux       # flux, gitops operator, loaded before everything
+├─📁 crds       # custom resources, loaded before 📁 core and 📁 apps
+├─📁 charts     # helm repos, loaded before 📁 core and 📁 apps
+├─📁 config     # cluster config, loaded before 📁 core and 📁 apps
+├─📁 core       # crucial apps, namespaced dir tree, loaded before 📁 apps
+└─📁 apps       # regular apps, namespaced dir tree, loaded last
+```
 
 ## 🚀 Lets go
 
@@ -356,19 +199,19 @@ In order to use Terraform and `cert-manager` with the Cloudflare DNS challenge y
 4. Verify Ansible can ping your nodes
 
     ```sh
-    task cluster:ping
+    task ansible:ping
     ```
 
 5. Run the Ubuntu Prepare Ansible playbook
 
     ```sh
-    task cluster:prepare
+    task ansible:prepare
     ```
 
 6. Reboot the nodes
 
     ```sh
-    task cluster:reboot
+    task ansible:reboot
     ```
 
 ### ⛵ Installing k3s with Ansible
@@ -386,13 +229,13 @@ In order to use Terraform and `cert-manager` with the Cloudflare DNS challenge y
 2. Verify Ansible can ping your nodes
 
     ```sh
-    task cluster:ping
+    task ansible:ping
     ```
 
 3. Install k3s with Ansible
 
     ```sh
-    task cluster:install
+    task ansible:install
     ```
 
 4. Verify the nodes are online
@@ -439,50 +282,32 @@ The cluster application [external-dns](https://github.com/kubernetes-sigs/extern
 1. Verify Flux can be installed
 
     ```sh
-    task flux:verify
+    task cluster:verify
     # ► checking prerequisites
     # ✔ kubectl 1.21.5 >=1.18.0-0
     # ✔ Kubernetes 1.21.5+k3s1 >=1.16.0-0
     # ✔ prerequisites checks passed
     ```
 
-2. Create the `flux-system` namespace
-
-    ```sh
-    task flux:create-namespace
-    ```
-
-3. Add the Age key to your cluster as a secret in-order for Flux to decrypt SOPS secrets
-
-    ```sh
-    task flux:secret
-    ```
-
-    📍 Variables defined in `./cluster/base/cluster-secrets.sops.yaml` and `./cluster/base/cluster-settings.yaml` will be usable anywhere in your YAML manifests under `./cluster` except `./cluster/base`
-
-4. Push you changes to git
+2. Push you changes to git
 
     📍 **Verify** all the `*.sops.yaml` and `*.sops.yml` files under the `./cluster` and `./provision` folders are **encrypted** with SOPS
 
     ```sh
     git add -A
-    git commit -m "initial commit"
+    git commit -m "Initial commit :rocket:"
     git push
     ```
 
-5. Install Flux
-
-    📍 Due to race conditions with the Flux CRDs you will have to run the below command twice. There should be no errors on this second run.
+3. Install Flux and sync the cluster to the Git repository
 
     ```sh
-    task flux:install
+    task cluster:install
     # namespace/flux-system configured
     # customresourcedefinition.apiextensions.k8s.io/alerts.notification.toolkit.fluxcd.io created
-    # ...
-    # unable to recognize "./cluster/base/flux-system": no matches for kind "HelmRepository" in version "source.toolkit.fluxcd.io/v1beta1"
     ```
 
-6. Verify Flux components are running in the cluster
+4. Verify Flux components are running in the cluster
 
     ```sh
     task cluster:pods -- -n flux-system
@@ -569,9 +394,9 @@ Once you have confirmed there are no issues requesting your certificates replace
 
 ### 🤖 Renovatebot
 
-[Renovatebot](https://www.whitesourcesoftware.com/free-developer-tools/renovate/) will scan your repository and offer PRs when it finds dependencies out of date. Common dependencies it will discover and update are Flux, Ansible Galaxy Roles, Terraform Providers, Kubernetes Helm Charts, Kubernetes Container Images, Pre-commit hooks updates, and more!
+[Renovatebot](https://www.mend.io/free-developer-tools/renovate/) will scan your repository and offer PRs when it finds dependencies out of date. Common dependencies it will discover and update are Flux, Ansible Galaxy Roles, Terraform Providers, Kubernetes Helm Charts, Kubernetes Container Images, Pre-commit hooks updates, and more!
 
-The base Renovate configuration provided in your repository can be view at [.github/renovate.json5](https://github.com/k8s-at-home/template-cluster-k3s/blob/main/.github/renovate.json5). If you notice this only runs on weekends and you can [change the schedule to anything you want](https://docs.renovatebot.com/presets-schedule/) or simply remove it.
+The base Renovate configuration provided in your repository can be view at [.github/renovate.json5](https://github.com/k8s-at-home/flux-cluster-template/blob/main/.github/renovate.json5). If you notice this only runs on weekends and you can [change the schedule to anything you want](https://docs.renovatebot.com/presets-schedule/) or simply remove it.
 
 To enable Renovate on your repository, click the 'Configure' button over at their [Github app page](https://github.com/apps/renovate) and choose your repository. Over time Renovate will create PRs for out-of-date dependencies it finds. Any merged PRs that are in the cluster directory Flux will deploy.
 
@@ -668,10 +493,10 @@ The benefits of a public repository include:
       apiVersion: source.toolkit.fluxcd.io/v1beta2
       kind: GitRepository
       metadata:
-        name: flux-system
+        name: flux-installation
         namespace: flux-system
       spec:
-        interval: 5m0s
+        interval: 10m
         # 6a: Change this to your user and repo names
         url: ssh://git@github.com/$user/$repo
         ref:
@@ -693,7 +518,7 @@ The benefits of a public repository include:
 
 ## 👉 Troubleshooting
 
-Our [wiki](https://github.com/k8s-at-home/template-cluster-k3s/wiki) (WIP, contributions welcome) is a good place to start troubleshooting issues. If that doesn't cover your issue, come join and say Hi in our [Discord](https://discord.gg/k8s-at-home) server by starting a new thread in the #kubernetes support channel.
+Our [wiki](https://github.com/k8s-at-home/flux-cluster-template/wiki) (WIP, contributions welcome) is a good place to start troubleshooting issues. If that doesn't cover your issue, come join and say Hi in our [Discord](https://discord.gg/k8s-at-home) server by starting a new thread in the #kubernetes support channel.
 
 You may also open a issue on this GitHub repo or open a [discussion on GitHub](https://github.com/k8s-at-home/organization/discussions).
 
@@ -701,7 +526,7 @@ You may also open a issue on this GitHub repo or open a [discussion on GitHub](h
 
 The world is your cluster, see below for important things you could work on adding.
 
-Our Check out our [wiki](https://github.com/k8s-at-home/template-cluster-k3s/wiki) (WIP, contributions welcome) for more integrations!
+Our Check out our [wiki](https://github.com/k8s-at-home/flux-cluster-template/wiki) (WIP, contributions welcome) for more integrations!
 
 ## 🤝 Thanks
 

@@ -5,8 +5,4 @@ resources:
   - namespaces
   - cert-manager
   - kube-system
-  - flux-system
-  - networking
-  # - longhorn
-  # - monitoring
-  # - system-upgrade
+  - metallb-system

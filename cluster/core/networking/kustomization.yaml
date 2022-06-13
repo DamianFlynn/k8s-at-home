@@ -1,9 +1,0 @@
----
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - metallb-system
-  - kube-vip
-  - k8s-gateway
-  - external-dns
-  - cloudflare-ddns

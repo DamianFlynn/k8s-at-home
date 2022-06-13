@@ -1,8 +1,0 @@
-# yamllint disable
-apiVersion: v1
-kind: Secret
-metadata:
-  name: discord-webhook-url
-  namespace: flux-system
-stringData:
-    address: ${DISCORD_WEBHOOK}

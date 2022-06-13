@@ -16,12 +16,8 @@ env:
 includes:
   ansible: .taskfiles/AnsibleTasks.yml
   cluster: .taskfiles/ClusterTasks.yml
-  flux: .taskfiles/FluxTasks.yml
   precommit: .taskfiles/PrecommitTasks.yml
   terraform: .taskfiles/TerraformTasks.yml
-  helm: .taskfiles/HelmTasks.yml
-  lint: .taskfiles/LintTasks.yml
-  format: .taskfiles/FormatTasks.yml
 
 tasks:
 
@@ -40,7 +36,6 @@ tasks:
         ansible
         direnv
         fluxcd/tap/flux
-        gitleaks
         go-task/tap/go-task
         helm
         ipcalc
