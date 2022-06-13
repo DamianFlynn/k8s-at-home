@@ -24,8 +24,6 @@ kubectl -n flux-system create secret generic discord-webhook \
 --from-literal=address=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
 
 
-kubectl -n flux-system create secret generic discord-webhook \
---from-literal=address=https://discord.com/api/webhooks/983478725708480522/N4T52SB5PhixQtPF8y5dw0ptv2mXv8dpyTyLC3zBHXDsmGIBgZmB92Dq5Z6kknedZ0Tg
 
 ## 📂 Repository structure
 
@@ -37,6 +35,27 @@ The Git repository contains the following directories under `cluster` and are or
 - **apps** directory (depends on **core**) is where your common applications (grouped by namespace) could be placed, Flux will prune resources here if they are not tracked by Git anymore
 
 ```
+📁 cluster      # k8s cluster defined as code
+├─📁 flux       # flux, gitops operator, loaded before everything
+├─📁 crds       # custom resources, loaded before 📁 core and 📁 apps
+├─📁 charts     # helm repos, loaded before 📁 core and 📁 apps
+├─📁 config     # cluster config, loaded before 📁 core and 📁 apps
+├─📁 core       # crucial apps, namespaced dir tree, loaded before 📁 apps
+└─📁 apps       # regular apps, namespaced dir tree, loaded last
+  ├─📁 default                # 'default' namespace
+    ├─📁 echo-server          # External testing echo-server
+    └─📁 hajimari             # Dashboard for applicstions - internal only
+  ├─📁 home                   # 'home' namespace
+    └─📁 home-assistant     # Home-assistant
+  ├─📁 kube-system            # 'home' namespace
+    └─📁 dashboard          # Kubernettes Dashboard
+  ├─📁 monitoring             # 'home' namespace
+    └─📁 grafana            # Grafanna
+  ├─📁 networking             # 'networking' namespace
+    ├─📁 error-pages        # Traefik Error Pages
+    └─📁 traefik            # Traefik
+  └─📁 tools                  # Traefik
+    └─📁 changedetection-io            # Traefik
 cluster
 ├── apps
 │   ├── default
@@ -337,19 +356,19 @@ In order to use Terraform and `cert-manager` with the Cloudflare DNS challenge y
 4. Verify Ansible can ping your nodes
 
     ```sh
-    task ansible:ping
+    task cluster:ping
     ```
 
 5. Run the Ubuntu Prepare Ansible playbook
 
     ```sh
-    task ansible:prepare
+    task cluster:prepare
     ```
 
 6. Reboot the nodes
 
     ```sh
-    task ansible:reboot
+    task cluster:reboot
     ```
 
 ### ⛵ Installing k3s with Ansible
@@ -367,13 +386,13 @@ In order to use Terraform and `cert-manager` with the Cloudflare DNS challenge y
 2. Verify Ansible can ping your nodes
 
     ```sh
-    task ansible:ping
+    task cluster:ping
     ```
 
 3. Install k3s with Ansible
 
     ```sh
-    task ansible:install
+    task cluster:install
     ```
 
 4. Verify the nodes are online
@@ -420,7 +439,7 @@ The cluster application [external-dns](https://github.com/kubernetes-sigs/extern
 1. Verify Flux can be installed
 
     ```sh
-    task cluster:flux:verify
+    task flux:verify
     # ► checking prerequisites
     # ✔ kubectl 1.21.5 >=1.18.0-0
     # ✔ Kubernetes 1.21.5+k3s1 >=1.16.0-0
@@ -430,13 +449,13 @@ The cluster application [external-dns](https://github.com/kubernetes-sigs/extern
 2. Create the `flux-system` namespace
 
     ```sh
-    task cluster:flux:namespace
+    task flux:create-namespace
     ```
 
 3. Add the Age key to your cluster as a secret in-order for Flux to decrypt SOPS secrets
 
     ```sh
-    task cluster:flux:secret
+    task flux:secret
     ```
 
     📍 Variables defined in `./cluster/base/cluster-secrets.sops.yaml` and `./cluster/base/cluster-settings.yaml` will be usable anywhere in your YAML manifests under `./cluster` except `./cluster/base`
@@ -456,7 +475,7 @@ The cluster application [external-dns](https://github.com/kubernetes-sigs/extern
     📍 Due to race conditions with the Flux CRDs you will have to run the below command twice. There should be no errors on this second run.
 
     ```sh
-    task cluster:flux:install
+    task flux:install
     # namespace/flux-system configured
     # customresourcedefinition.apiextensions.k8s.io/alerts.notification.toolkit.fluxcd.io created
     # ...

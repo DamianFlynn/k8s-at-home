@@ -38,10 +38,12 @@ tasks:
       - flux get sources chart -A
     silent: true
 
+
   reconcile:
     desc: Force update Flux to pull in changes from your Git repository
     cmds:
-      - flux reconcile source git flux-system {{.CLI_ARGS | default "-n flux-system"}}
+      - flux reconcile {{.CLI_ARGS | default "-n flux-system"}} source git flux-cluster
+      - flux reconcile {{.CLI_ARGS | default "-n flux-system"}} kustomization flux-cluster
 
   k:
     desc: List all Kustomizations
@@ -50,9 +52,19 @@ tasks:
     silent: true
 
   install:
-    desc: Install Flux into your cluster, run this again if it fails
+    desc: Install Flux into your cluster
     cmds:
-      - kubectl apply -k {{.CLUSTER_DIR}}/base/flux-system
+      - kubectl apply --kustomize {{.CLUSTER_DIR}}/bootstrap/
+      - cat {{.SOPS_AGE_KEY_FILE}} | kubectl -n flux-system create secret generic sops-age --from-file=age.agekey=/dev/stdin
+      - kubectl apply --kustomize {{.CLUSTER_DIR}}/flux/flux-system/
+      - task: reconcile
+    preconditions:
+      - sh: test -f {{.SOPS_AGE_KEY_FILE}}
+        msg: |
+          Age key file is not found. Did you forget to create it?
+    vars:
+      SOPS_AGE_KEY_FILE: ~/.config/sops/age/keys.txt
+
 
   secret:
     desc: Create the Age secret in the flux-system namespace

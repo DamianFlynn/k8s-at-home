@@ -5,5 +5,5 @@ resources:
   - cert-manager.yaml
   - networking.yaml
   - system-upgrade.yaml
-  - longhorn.yaml
+  # - longhorn.yaml
   - monitoring.yaml
