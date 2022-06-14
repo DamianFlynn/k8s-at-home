@@ -30,11 +30,11 @@ tasks:
       - helm ls {{.CLI_ARGS | default "-A"}}
   
   deployment-history:
-  desc: List history for helm releases in your cluster
+    desc: List history for helm releases in your cluster
     cmds:
       - helm history metallb -n metallb-system
 
   rollback:
-  desc: Rollback a failed Initial install underway 
+    desc: Rollback a failed Initial install underway 
     cmds:
       - helm rollback metallb 1 -n metallb-system
