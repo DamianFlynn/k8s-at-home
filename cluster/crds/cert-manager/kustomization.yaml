@@ -6,4 +6,4 @@ metadata:
   namespace: cert-manager
 resources:
   # renovate: datasource=docker image=quay.io/jetstack/cert-manager-controller
-  - https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.crds.yaml
+  - https://github.com/cert-manager/cert-manager/releases/download/v1.8.1/cert-manager.crds.yaml
