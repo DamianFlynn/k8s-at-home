@@ -3,35 +3,43 @@ version: "3"
 
 tasks:
 
-  verify:
-    desc: Verify flux meets the prerequisites
+  # Cluster Ansible Tasks
+  prepare:
+    desc: Prepare all the k8s nodes for running k3s
+    dir: provision/ansible
     cmds:
-      - flux check --pre
+      - ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml {{.ANSIBLE_PLAYBOOK_DIR}}/cluster-prepare.yml
 
   install:
-    desc: Install Flux into your cluster
+    desc: Install Kubernetes on the nodes
+    dir: provision/ansible
     cmds:
-      - kubectl apply --kustomize {{.CLUSTER_DIR}}/bootstrap/
-      - cat {{.SOPS_AGE_KEY_FILE}} | kubectl -n flux-system create secret generic sops-age --from-file=age.agekey=/dev/stdin
-      - kubectl apply --kustomize {{.CLUSTER_DIR}}/flux/flux-system/
-      - task: reconcile
-    preconditions:
-      - sh: test -f {{.SOPS_AGE_KEY_FILE}}
-        msg: |
-          Age key file is not found. Did you forget to create it?
-    vars:
-      SOPS_AGE_KEY_FILE: ~/.config/sops/age/keys.txt
+      - ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml {{.ANSIBLE_PLAYBOOK_DIR}}/cluster-installation.yml
 
-  reconcile:
-    desc: Force update Flux to pull in changes from your Git repository
+  nuke:
+    desc: Uninstall Kubernetes on the nodes
+    dir: provision/ansible
+    interactive: true
     cmds:
-      - flux reconcile -n flux-system source git flux-cluster
-      - flux reconcile -n flux-system kustomization flux-cluster
+      - ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml {{.ANSIBLE_PLAYBOOK_DIR}}/cluster-nuke.yml
+      - task: reboot
+
+  # K8S Tasks
 
   nodes:
     desc: List all the nodes in your cluster
     cmds:
       - kubectl get nodes {{.CLI_ARGS | default "-o wide"}}
+
+  nodelabels:
+    desc: List all the nodes in your cluster with lables
+    cmds:
+      - kubectl get nodes -o json | jq .items[].metadata.labels
+
+  k9s:
+    desc: Launch k9s tool
+    cmds:
+      - k9s
 
   pods:
     desc: List all the pods in your cluster
@@ -74,3 +82,102 @@ tasks:
       - task: gitrepositories
       - task: certificates
       - task: pods
+
+  # Debugging
+  list-dockerhub:
+    desc: What dockerhub images are running in my cluster
+    cmds:
+      - kubectl get pods --all-namespaces -o=jsonpath="{range .items[*]}{'\n'}{range .spec.containers[*]}{.image}{'\n'}{end}{end}" | sort | uniq | grep -Ev 'quay|gcr|ghcr|ecr|us-docker' | grep -Ev 'bitnami|rook|intel|grafana' |  sed -e 's/docker\.io\///g' | sort | uniq
+
+  list-failed-pods:
+    desc: List failed pods
+    cmds:
+      - kubectl get pods --field-selector status.phase=Failed -A --ignore-not-found=true
+
+  delete-failed-pods:
+    desc: Deletes failed pods
+    cmds:
+      - kubectl delete pods --field-selector status.phase=Failed -A --ignore-not-found=true
+
+
+  netshoot:
+    desc: Create a netshoot container for debugging
+    cmds:
+      - kubectl run tmp-shell --rm -i --tty --image ghcr.io/nicolaka/netshoot:latest {{.CLI_ARGS}}
+
+  debug-node:
+    desc: Create a privileged container on a node for debugging, ex. NODE=anvil task debug-node
+    interactive: true
+    cmds:
+      - |
+        kubectl run debug-{{.NODE}} -i --tty --rm --image="docker.io/library/alpine:3.15" --privileged --overrides='
+          {
+            "spec": {
+              "nodeSelector": {
+                "kubernetes.io/hostname": "{{.NODE}}"
+              },
+              "restartPolicy": "Never"
+            }
+          }'
+
+
+  debug-volume:
+    desc: Attach a volume to a container for debugging, ex. VOLUME=zigbee2mqtt-config-v1 NAMESPACE=home task debug-volume
+    interactive: true
+    silent: true
+    cmds:
+      - |
+        kubectl run debug-{{.VOLUME}} -n {{.NAMESPACE}} -i --tty --rm --image=null --overrides='
+          {
+            "spec": {
+              "containers": [
+                {
+                  "name": "debug",
+                  "image": "docker.io/library/alpine:3.15",
+                  "command": [
+                    "/bin/sh"
+                  ],
+                  "stdin": true,
+                  "stdinOnce": true,
+                  "tty": true,
+                  "lifecycle": {
+                    "postStart": {
+                      "exec": {
+                        "command": [
+                          "/bin/sh",
+                          "-c",
+                          "apk add --no-cache curl vim"
+                        ]
+                      }
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "name": "backups",
+                      "mountPath": "/mnt/backups/"
+                    },
+                    {
+                      "name": "debug-volume",
+                      "mountPath": "/mnt/volume/"
+                    }
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "name": "backups",
+                  "nfs": {
+                    "server": '{{.NAS_ADDRESS | default "expanse"}}',
+                    "path": '{{.NAS_PATH | default "/tycho/Apps/External/Backups"}}'
+                  }
+                },
+                {
+                  "name": "debug-volume",
+                  "persistentVolumeClaim": {
+                    "claimName": "{{.VOLUME}}"
+                  }
+                }
+              ],
+              "restartPolicy": "Never"
+            }
+          }'
