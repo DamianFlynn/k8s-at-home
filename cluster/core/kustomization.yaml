@@ -6,5 +6,6 @@ resources:
   - cert-manager
   - flux-system
   - kube-system
+  - monitoring
   - networking
   - system-upgrade
