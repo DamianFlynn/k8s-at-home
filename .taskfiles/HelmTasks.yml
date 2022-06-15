@@ -38,3 +38,7 @@ tasks:
     desc: Rollback a failed Initial install underway 
     cmds:
       - helm rollback metallb 1 -n metallb-system
+
+  deployment-history-failed:
+    desc: List history of the failed releases
+    cmds: kubectl get hr --all-namespaces | grep False | awk '{print $2, $1}' | xargs -l bash -c 'helm history $0 -n $1'
