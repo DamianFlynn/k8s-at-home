@@ -1,0 +1,29 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - aqua-charts.yaml
+  - bitnami-charts.yaml
+  - deliveryhero-charts.yaml
+  - descheduler-charts.yaml
+  - emberstack-charts.yaml
+  - emqx-charts.yaml
+  - external-dns-charts.yaml
+  - fairwinds-charts.yaml
+  - falco-security-charts.yaml
+  - gitea-charts.yaml
+  - grafana-charts.yaml
+  - ingress-nginx-charts.yaml
+  - jetstack-charts.yaml
+  - k8s-at-home-charts.yaml
+  - kasten-charts.yaml
+  - kyverno-charts.yaml
+  - metrics-server-charts.yaml
+  - nfs-subdir-external-provisioner-charts.yaml
+  - node-feature-discovery-charts.yaml
+  - oauth2-proxy-charts.yaml
+  - project-calico-charts.yaml
+  - prometheus-community-charts.yaml
+  - rook-ceph-charts.yaml
+  - stakater-charts.yaml
+  - vector-charts.yaml

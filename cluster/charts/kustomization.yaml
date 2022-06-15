@@ -5,6 +5,7 @@ resources:
   - emberstack-charts.yaml
   - external-dns-charts.yaml
   - hajimari-charts.yaml
+  - infracloudio-charts.yaml
   - jetstack-charts.yaml
   - k8s-at-home-charts.yaml
   - k8s-gateway-charts.yaml
@@ -13,4 +14,4 @@ resources:
   - stakater-charts.yaml
   - traefik-charts.yaml
   - weaveworks-kured-charts.yaml
-  - infracloudio-charts.yaml
+
