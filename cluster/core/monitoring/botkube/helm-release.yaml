@@ -28,27 +28,29 @@ spec:
         channel: "${SECRET_BOTKUBE_DISCORD_CHANNEL_ID}"
     # serviceMonitor:
     #   enabled: true
-    logLevel: debug
+    logLevel: debug  # set one of the log levels- info, warn, debug, error, fatal, panic
     config:
       recommendations: false
       settings:
         clustername: home-cluster
       resources:
-        - name: v1/pods
-          namespaces:
+        - name: v1/pods             # Name of the resource. Resource name must be in group/version/resource (G/V/R) format
+                                    # resource name should be plural (e.g apps/v1/deployments, v1/pods)
+          namespaces:               # List of namespaces, "all" will watch all the namespaces
             include:
               - all
-            ignore:
-              - tigera-operator
-          events:
+            ignore:                 # List of namespaces to be ignored (omitempty), used only with include: all, can contain a wildcard (*)
+              -                     # example : include [all], ignore [x,y,secret-ns-*]
+          events:                   # List of lifecycle events you want to receive, e.g create, update, delete, error OR all
             - create
             - delete
+            - error
         - name: v1/services
           namespaces:
             include:
               - all
             ignore:
-              - tigera-operator
+              -
           events:
             - create
             - delete
@@ -58,7 +60,7 @@ spec:
             include:
               - all
             ignore:
-              - tigera-operator
+              -
           events:
             - create
             - update
@@ -68,12 +70,13 @@ spec:
             includeDiff: true
             fields:
               - spec.template.spec.containers[*].image
+              - status.availableReplicas
         - name: apps/v1/statefulsets
           namespaces:
             include:
               - all
             ignore:
-              - tigera-operator
+              -
           events:
             - create
             - update
@@ -83,10 +86,13 @@ spec:
             includeDiff: true
             fields:
               - spec.template.spec.containers[*].image
-        - name: networking.k8s.io/v1beta1/ingresses
+              - status.readyReplicas
+        - name: networking.k8s.io/v1/ingresses
           namespaces:
             include:
               - all
+            ignore:
+              -
           events:
             - create
             - delete
@@ -95,6 +101,8 @@ spec:
           namespaces:
             include:
               - all
+            ignore:
+              -
           events:
             - create
             - delete
@@ -103,6 +111,8 @@ spec:
           namespaces:
             include:
               - all
+            ignore:
+              -
           events:
             - create
             - delete
@@ -111,6 +121,8 @@ spec:
           namespaces:
             include:
               - all
+            ignore:
+              -
           events:
             - create
             - delete
@@ -119,49 +131,48 @@ spec:
           namespaces:
             include:
               - all
+            ignore:
+              -
           events:
             - create
             - delete
             - error
-        - name: v1/secrets
-          namespaces:
-            include:
-              - all
-          events:
-            - create
-            - delete
-            - error
-            - update
         - name: v1/configmaps
           namespaces:
             include:
               - all
+            ignore:
+              -
           events:
             - create
             - delete
             - error
-            - update
         - name: apps/v1/daemonsets
           namespaces:
             include:
               - all
+            ignore:
+              -
           events:
             - create
+            - update
             - delete
             - error
-            - update
           updateSetting:
             includeDiff: true
             fields:
               - spec.template.spec.containers[*].image
+              - status.numberReady
         - name: batch/v1/jobs
           namespaces:
             include:
               - all
+            ignore:
+              -
           events:
             - create
-            - delete
             - update
+            - delete
             - error
           updateSetting:
             includeDiff: true
@@ -172,6 +183,8 @@ spec:
           namespaces:
             include:
               - all
+            ignore:
+              -
           events:
             - create
             - delete
@@ -180,14 +193,8 @@ spec:
           namespaces:
             include:
               - all
-          events:
-            - create
-            - delete
-            - error
-        - name: rbac.authorization.k8s.io/v1/clusterroles
-          namespaces:
-            include:
-              - all
+            ignore:
+              -
           events:
             - create
             - delete
@@ -196,8 +203,19 @@ spec:
           namespaces:
             include:
               - all
+            ignore:
+              -
           events:
             - create
             - delete
             - error
-
+        - name: rbac.authorization.k8s.io/v1/clusterroles
+          namespaces:
+            include:
+              - all
+            ignore:
+              -
+          events:
+            - create
+            - delete
+            - error
