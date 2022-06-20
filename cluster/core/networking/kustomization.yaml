@@ -8,4 +8,5 @@ resources:
   - error-pages
   - cloudflare-ddns
   - traefik
+  - wildcard-certificate
   # - traefik-forward-auth
