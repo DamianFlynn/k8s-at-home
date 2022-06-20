@@ -34,14 +34,11 @@ spec:
       settings:
         clustername: home-cluster
       resources:
-        - name: v1/pods             # Name of the resource. Resource name must be in group/version/resource (G/V/R) format
-                                    # resource name should be plural (e.g apps/v1/deployments, v1/pods)
-          namespaces:               # List of namespaces, "all" will watch all the namespaces
+        - name: v1/pods
+          namespaces:  
             include:
               - all
-            ignore:                 # List of namespaces to be ignored (omitempty), used only with include: all, can contain a wildcard (*)
-              -                     # example : include [all], ignore [x,y,secret-ns-*]
-          events:                   # List of lifecycle events you want to receive, e.g create, update, delete, error OR all
+          events:
             - create
             - delete
             - error
@@ -49,8 +46,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete
@@ -59,8 +54,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - update
@@ -75,8 +68,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - update
@@ -91,8 +82,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete
@@ -101,8 +90,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete
@@ -111,8 +98,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete
@@ -121,8 +106,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete
@@ -131,8 +114,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete
@@ -141,8 +122,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete
@@ -151,8 +130,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - update
@@ -167,8 +144,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - update
@@ -183,8 +158,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete
@@ -193,8 +166,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete
@@ -203,8 +174,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete
@@ -213,8 +182,6 @@ spec:
           namespaces:
             include:
               - all
-            ignore:
-              -
           events:
             - create
             - delete

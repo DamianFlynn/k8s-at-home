@@ -36,6 +36,12 @@ tasks:
     cmds:
       - kubectl get nodes -o json | jq .items[].metadata.labels
 
+  reboot:
+    desc: Reboot all the k8s nodes
+    dir: provision/ansible
+    cmds:
+      - ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml {{.ANSIBLE_PLAYBOOK_DIR}}/cluster-reboot.yml
+
   k9s:
     desc: Launch k9s tool
     cmds:
