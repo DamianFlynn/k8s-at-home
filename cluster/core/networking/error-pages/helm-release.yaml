@@ -20,11 +20,11 @@ spec:
       namespace: networking
   install:
     createNamespace: true
-    remediation:
-      retries: 3
-  upgrade:
-    remediation:
-      retries: 3
+  #   remediation:
+  #     retries: 3
+  # upgrade:
+  #   remediation:
+  #     retries: 3
   values:
     image:
       repository: ghcr.io/tarampampam/error-pages
