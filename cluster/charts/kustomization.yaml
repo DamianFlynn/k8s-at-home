@@ -9,6 +9,7 @@ resources:
   - jetstack-charts.yaml
   - k8s-at-home-charts.yaml
   - k8s-gateway-charts.yaml
+  - kubernetes-dashboard-charts.yaml
   - metallb-charts.yaml
   - metrics-server-charts.yaml
   - stakater-charts.yaml
