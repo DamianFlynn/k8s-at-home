@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - bitnami-charts.yaml
   - emberstack-charts.yaml
+  - emqx-charts.yaml
   - external-dns-charts.yaml
   - hajimari-charts.yaml
   - infracloudio-charts.yaml
