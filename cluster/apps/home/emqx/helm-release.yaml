@@ -8,6 +8,7 @@ spec:
   interval: 15m
   chart:
     spec:
+      # renovate: registryUrl=https://repos.emqx.io/charts
       chart: emqx
       version: 4.4.4
       sourceRef:
@@ -27,6 +28,24 @@ spec:
       repository: public.ecr.aws/emqx/emqx
     replicaCount: 3
     recreatePods: true
+    service:
+      type: LoadBalancer
+      loadBalancerIP: 172.16.1.42
+      # externalIPs:
+      #   - "${SVC_EMQX_ADDR}"
+      # externalTrafficPolicy: Local
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - emqx
+              topologyKey: kubernetes.io/hostname
     emqxConfig:
       EMQX_ALLOW_ANONYMOUS: "false"
       EMQX_AUTH__MNESIA__PASSWORD_HASH: plain
@@ -51,11 +70,21 @@ spec:
       {emqx_mod_rewrite, false}.
       {emqx_mod_subscription, false}.
       {emqx_mod_topic_metrics, true}.
-    service:
-      type: LoadBalancer
-      externalIPs:
-        - "${SVC_EMQX_ADDR}"
-      externalTrafficPolicy: Local
+
+    metrics:
+      enabled: false
+    # persistence:
+    #   enabled: true
+    #   storageClass: ceph-block
+    #   size: 100Mi
+
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 10m
+        memory: 150Mi
+        
     # ingress:
     #   dashboard:
     #     enabled: true
@@ -67,30 +96,6 @@ spec:
     #     tls:
     #       - hosts:
     #           - *host
-    metrics:
-      enabled: false
-    # persistence:
-    #   enabled: true
-    #   storageClass: ceph-block
-    #   size: 100Mi
-    affinity:
-      podAntiAffinity:
-        preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                  - key: app.kubernetes.io/name
-                    operator: In
-                    values:
-                      - emqx
-              topologyKey: kubernetes.io/hostname
-    resources:
-      requests:
-        cpu: 10m
-        memory: 150Mi
-      limits:
-        memory: 512Mi
   valuesFrom:
     - targetPath: emqxConfig.EMQX_ADMIN_PASSWORD
       kind: Secret
