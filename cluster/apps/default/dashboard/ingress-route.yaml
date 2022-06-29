@@ -14,8 +14,8 @@ spec:
         - name: kubernetes-dashboard
           port: https
           scheme: https
-      # middlewares:
-      #   - name: traefik-forward-auth
-      #     namespace: networking
+      middlewares:
+        - name: internal-only
+          namespace: networking
   tls:
     secretName: "k8s-${SECRET_DOMAIN/./-}-tls"
