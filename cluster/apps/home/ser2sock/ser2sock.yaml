@@ -22,7 +22,7 @@ spec:
       tag: armhf
       imagePullPolicy: Always
     env:
-      TZ: "America/New York"
+      TZ: "Europe/Dublin"
       LISTENER_PORT: 10000
       BAUD_RATE: 115200
       SERIAL_DEVICE: "/dev/ttyUSB0"
@@ -36,13 +36,13 @@ spec:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
             - matchExpressions:
-                - {key: "feature.node.kubernetes.io/custom-alarmdecoder", operator: In, values: ["true"]}
+                - {key: "feature.node.kubernetes.io/custom-cbus", operator: In, values: ["true"]}
     persistence:
       usb:
         enabled: true
         type: hostPath
         mountPath: /dev/ttyUSB0
-        hostPath: /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DO00DPTS-if00-port0
+        hostPath: /dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_D-if00-port0
         # hostPathType: CharDevice
     resources:
       requests:
