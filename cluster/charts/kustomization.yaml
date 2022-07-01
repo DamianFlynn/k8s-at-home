@@ -13,6 +13,7 @@ resources:
   - kubernetes-dashboard-charts.yaml
   - metallb-charts.yaml
   - metrics-server-charts.yaml
+  - nfs-subdir-external-provisioner-charts.yaml
   - stakater-charts.yaml
   - traefik-charts.yaml
   - weaveworks-kured-charts.yaml
