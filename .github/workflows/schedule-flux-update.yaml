@@ -3,8 +3,9 @@ name: Schedule - Flux Upgrade
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * *"
+# Disable the Schedule Update until the physical environment is refreshed    
+#  schedule:
+#    - cron: "0 0 * * *"
 
 jobs:
   flux-upgrade:

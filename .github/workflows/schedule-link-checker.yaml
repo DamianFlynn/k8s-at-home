@@ -3,8 +3,9 @@ name: Schedule - Link Checker
 
 on: # yamllint disable-line rule:truthy
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * *"
+# Disable the Schedule Update until the physical environment is refreshed    
+#  schedule:
+#    - cron: "0 0 * * *"
 
 jobs:
   link-checker:
